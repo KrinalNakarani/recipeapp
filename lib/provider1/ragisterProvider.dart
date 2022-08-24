@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
 class RagiProvider extends ChangeNotifier {
@@ -31,7 +32,7 @@ class RagiProvider extends ChangeNotifier {
           email: email, password: password);
       msg = "You are login Successfully";
     }
-    on FirebaseAuthException catch(e){
+    on FirebaseAuthException catch (e) {
       if (e.code == "User-Not-Found") {
         msg = "No user found for that email";
       }
@@ -42,21 +43,34 @@ class RagiProvider extends ChangeNotifier {
     return msg;
   }
 
-  bool chckUser(){
+  bool chckUser() {
     var firebaseAuth = FirebaseAuth.instance;
     var user = firebaseAuth.currentUser;
-    if(user!=null)
-      {
-        return true;
-      }
-    else{
+    if (user != null) {
+      return true;
+    }
+    else {
       return false;
     }
   }
 
-  void signOut(){
+  void signOut() {
     var firebaseAuth = FirebaseAuth.instance;
     firebaseAuth.signOut();
+  }
+
+  void googleSignIn() async {
+    GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? user = await googleSignInAccount!.authentication;
+
+    var crd = GoogleAuthProvider.credential(
+      idToken: user.idToken,
+      accessToken: user.accessToken,
+    );
+
+    var firebaseAuth = FirebaseAuth.instance;
+    firebaseAuth.signInWithCredential(crd);
+
   }
 
 }

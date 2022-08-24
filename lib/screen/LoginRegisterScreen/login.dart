@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../provider1/ragisterProvider.dart';
+import '../../provider1/ragisterProvider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -14,23 +14,6 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController email = TextEditingController();
   TextEditingController Password = TextEditingController();
   bool login = false;
-
-  @override
-  void initState() {
-    super.initState();
-    login = Provider.of<RagiProvider>(context, listen: false).chckUser();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  void isLogin() {
-    if (login) {
-      Navigator.pushReplacementNamed(context, 'home');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +68,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pushReplacementNamed(context, 'home');
                   },
                   child: Text("Login"),
+                ),
+                GestureDetector(
+                  onTap: () {
+                   Provider.of<RagiProvider>(context,listen: false).googleSignIn();
+                 //  Navigator.pushReplacementNad(context, 'home');
+                  },
+                  child: Image.network(
+                      "https://onymos.com/wp-content/uploads/2020/10/google-signin-button.png"),
                 ),
                 TextButton(
                   onPressed: () {
