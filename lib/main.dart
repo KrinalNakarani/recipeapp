@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recipeapp/provider1/ragisterProvider.dart';
 import 'package:recipeapp/screen/login.dart';
+import 'package:recipeapp/screen/register.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +19,8 @@ void main() async {
         debugShowCheckedModeBanner: false,
         routes: {
           '/': (context) => LoginScreen(),
-          'reg': (context) => LoginScreen(),
+          'reg': (context) => RegisterScreen(),
+          'home': (context) => RegisterScreen(),
         },
       ),
     ),

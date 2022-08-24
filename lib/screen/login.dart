@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../provider1/ragisterProvider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -8,6 +11,27 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController email = TextEditingController();
+  TextEditingController Password = TextEditingController();
+  bool login = false;
+
+  @override
+  void initState() {
+    super.initState();
+    login = Provider.of<RagiProvider>(context, listen: false).chckUser();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  void isLogin() {
+    if (login) {
+      Navigator.pushReplacementNamed(context, 'home');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -30,29 +54,42 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 30,
                 ),
                 TextField(
+                  controller: email,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     label: Text("Email"),
                   ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 SizedBox(
                   height: 20,
                 ),
                 TextField(
+                  controller: Password,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    label: Text("Email"),
+                    label: Text("Password"),
                   ),
+                  keyboardType: TextInputType.number,
                 ),
                 SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    var res =
+                        await Provider.of<RagiProvider>(context, listen: false)
+                            .loginUser(email.text, Password.text);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text("$res")));
+                    Navigator.pushReplacementNamed(context, 'home');
+                  },
                   child: Text("Login"),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, 'reg');
+                  },
                   child: Text(
                     "Create new account! SignUp",
                     style: TextStyle(color: Colors.blue),
