@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:recipeapp/provider1/dbProvider.dart';
 import 'package:recipeapp/provider1/ragisterProvider.dart';
 import 'package:recipeapp/screen/LoginRegisterScreen/login.dart';
 import 'package:recipeapp/screen/LoginRegisterScreen/register.dart';
@@ -13,13 +14,12 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => RagiProvider(),
-        ),
+        ChangeNotifierProvider(create: (context) => RagiProvider(),),
+        ChangeNotifierProvider(create: (context) => FDProvider(),),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: 'login',
+        initialRoute: 'home',
         routes: {
           '/': (context) =>SplashScreen(),
           'login': (context) => LoginScreen(),

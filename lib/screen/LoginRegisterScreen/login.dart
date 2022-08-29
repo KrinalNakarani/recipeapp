@@ -71,11 +71,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 GestureDetector(
                   onTap: () {
-                   Provider.of<RagiProvider>(context,listen: false).googleSignIn();
-                 //  Navigator.pushReplacementNad(context, 'home');
+                    Provider.of<RagiProvider>(context, listen: false)
+                        .googleSignIn();
                   },
-                  child: Image.network(
-                      "https://onymos.com/wp-content/uploads/2020/10/google-signin-button.png"),
+                  child: Container(
+                    height: 100,
+                    width: 300,
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Sign in with Google",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue),
+                    ),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
