@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         body: StreamBuilder(
-          stream: Provider.of<FDProvider>(context).readData(),
+          stream: Provider.of<FDProvider>(context, listen: false).readData(),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasError) {
               return Text("${snapshot.error}");
@@ -47,14 +47,13 @@ class _HomeScreenState extends State<HomeScreen> {
               DataSnapshot data = snapshot.data.snapshot;
 
               for (var x in data.children) {
-                String id = x.child("id").value.toString();
-                String title = x.child("title").value.toString();
-                String cate = x.child("cate").value.toString();
-                String desc = x.child("desc").value.toString();
-                String img = x.child("img").value.toString();
-
                 ModelRecipe r1 = ModelRecipe(
-                    id: id, title: title, cate: cate, desc: desc, img: img);
+                    id: x.child("id").value.toString(),
+                    title: x.child("title").value.toString(),
+                    cate: x.child("cate").value.toString(),
+                    desc: x.child("desc").value.toString(),
+                    img: x.child("img").value.toString(),
+                    key: x.key);
                 l1.add(r1);
               }
 
@@ -65,17 +64,51 @@ class _HomeScreenState extends State<HomeScreen> {
                       leading: Text("${l1[index].id}"),
                       title: Text("${l1[index].title}"),
                       subtitle: Text("${l1[index].cate}"),
-                      trailing: Text("${l1[index].id}"),
-
+                      trailing: SizedBox(
+                        width: 100,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                id = TextEditingController(text: l1[index].id);
+                                title = TextEditingController(text: l1[index].title);
+                                cate = TextEditingController(text: l1[index].cate);
+                                desc = TextEditingController(text: l1[index].desc);
+                                img = TextEditingController(text: l1[index].img);
+                                DialogBox(l1[index].key.toString());
+                              },
+                              icon: Icon(
+                                Icons.edit,
+                                color: Colors.green,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                Provider.of<FDProvider>(context, listen: false)
+                                    .Delete(l1[index].key);
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   });
             }
-          return  Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           },
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            DialogBox();
+            id = TextEditingController();
+            title = TextEditingController();
+            cate = TextEditingController();
+            desc = TextEditingController();
+            img = TextEditingController();
+            DialogBox(null);
           },
           child: Icon(Icons.add),
         ),
@@ -83,73 +116,80 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void DialogBox() {
+  void DialogBox(String? key) {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            content: SizedBox(
-              height: 500,
-              child: Column(
-                children: [
-                  TextField(
-                    controller: id,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "id",
+            content: SingleChildScrollView(
+              child: SizedBox(
+                height: 500,
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: id,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "id",
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    controller: title,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Title",
+                    SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    controller: cate,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Category",
+                    TextField(
+                      controller: title,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Title",
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    controller: desc,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Description",
+                    SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    controller: img,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Image",
+                    TextField(
+                      controller: cate,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Category",
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Provider.of<FDProvider>(context, listen: false).AddData(
-                          id.text, title.text, cate.text, desc.text, img.text);
-                    },
-                    child: Text("Submit"),
-                  ),
-                ],
+                    SizedBox(
+                      height: 20,
+                    ),
+                    TextField(
+                      controller: desc,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Description",
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    TextField(
+                      controller: img,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Image",
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Provider.of<FDProvider>(context, listen: false).AddData(
+                            id: id.text,
+                            title: title.text,
+                            cate: cate.text,
+                            desc: desc.text,
+                            img: img.text,
+                            key: key);
+                      },
+                      child: Text("Submit"),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

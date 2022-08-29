@@ -9,15 +9,13 @@ class RagiProvider extends ChangeNotifier {
     var firebaseAuth = FirebaseAuth.instance;
 
     try {
-      var res = await firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      var res = await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
       msg = "You are successfully registered";
-    }
-    on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
       if (e.code == "Week-password") {
         msg = "Password is too short";
-      }
-      else if (e.code == "email-in-already-use") {
+      } else if (e.code == "email-in-already-use") {
         msg = "You are is already registered";
       }
     }
@@ -31,12 +29,10 @@ class RagiProvider extends ChangeNotifier {
       var res = await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
       msg = "You are login Successfully";
-    }
-    on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
       if (e.code == "User-Not-Found") {
         msg = "No user found for that email";
-      }
-      else if (e.code == "Wrong-password") {
+      } else if (e.code == "Wrong-password") {
         msg = "wrong password provided for that user";
       }
     }
@@ -48,8 +44,7 @@ class RagiProvider extends ChangeNotifier {
     var user = firebaseAuth.currentUser;
     if (user != null) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -62,7 +57,8 @@ class RagiProvider extends ChangeNotifier {
 
   void googleSignIn() async {
     GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
-    GoogleSignInAuthentication? user = await googleSignInAccount!.authentication;
+    GoogleSignInAuthentication? user =
+        await googleSignInAccount!.authentication;
 
     var crd = GoogleAuthProvider.credential(
       idToken: user.idToken,
@@ -71,7 +67,5 @@ class RagiProvider extends ChangeNotifier {
 
     var firebaseAuth = FirebaseAuth.instance;
     firebaseAuth.signInWithCredential(crd);
-
   }
-
 }

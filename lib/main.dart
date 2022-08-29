@@ -14,14 +14,18 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => RagiProvider(),),
-        ChangeNotifierProvider(create: (context) => FDProvider(),),
+        ChangeNotifierProvider(
+          create: (context) => RagiProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FDProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: 'home',
         routes: {
-          '/': (context) =>SplashScreen(),
+          '/': (context) => SplashScreen(),
           'login': (context) => LoginScreen(),
           'reg': (context) => RegisterScreen(),
           'home': (context) => HomeScreen(),

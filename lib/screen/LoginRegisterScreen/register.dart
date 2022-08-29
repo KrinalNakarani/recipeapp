@@ -57,11 +57,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 20,
                 ),
                 ElevatedButton(
-                  onPressed: () async{
+                  onPressed: () async {
                     var data =
-                       await Provider.of<RagiProvider>(context, listen: false)
+                        await Provider.of<RagiProvider>(context, listen: false)
                             .createAccount(email.text, Password.text);
-
 
                     ScaffoldMessenger.of(context)
                         .showSnackBar(SnackBar(content: Text("$data")));
