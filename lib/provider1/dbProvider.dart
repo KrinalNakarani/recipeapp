@@ -14,6 +14,9 @@ class FDProvider extends ChangeNotifier {
     var FDBref = firebaseDatabase.ref();
     return FDBref.child("Recipe").onValue;
   }
+  void Delete(){}
+
+
 }
 
 class ModelRecipe {

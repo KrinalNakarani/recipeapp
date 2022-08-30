@@ -43,14 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
             } else if (snapshot.hasData) {
               print("====================${snapshot.data.snapshot}");
 
-              List<ModelRecipe> l1 = [];
+              List l1 = [];
+              DataSnapshot data = snapshot.data.snapshot;
 
-              for (DataSnapshot data in snapshot.data) {
-                String id = data.child("id").value.toString();
-                String title = data.child("title").value.toString();
-                String cate = data.child("cate").value.toString();
-                String desc = data.child("desc").value.toString();
-                String img = data.child("img").value.toString();
+              for (var x in data.children) {
+                String id = x.child("id").value.toString();
+                String title = x.child("title").value.toString();
+                String cate = x.child("cate").value.toString();
+                String desc = x.child("desc").value.toString();
+                String img = x.child("img").value.toString();
 
                 ModelRecipe r1 = ModelRecipe(
                     id: id, title: title, cate: cate, desc: desc, img: img);
@@ -62,6 +63,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context, index) {
                     return ListTile(
                       leading: Text("${l1[index].id}"),
+                      title: Text("${l1[index].title}"),
+                      subtitle: Text("${l1[index].cate}"),
+                      trailing: Text("${l1[index].id}"),
+
                     );
                   });
             }
