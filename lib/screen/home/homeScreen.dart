@@ -1,8 +1,14 @@
+import 'dart:ffi';
+
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:recipeapp/provider1/dbProvider.dart';
 import 'package:recipeapp/provider1/ragisterProvider.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,6 +23,17 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController desc = TextEditingController();
   TextEditingController img = TextEditingController();
   TextEditingController title = TextEditingController();
+FirebaseMessaging? firebaseMessaging;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  @override
+  void initState() {
+    super.initState();
+
+    local();
+    FirebaseNotification();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pushReplacementNamed(context, '/');
               },
               icon: Icon(Icons.logout),
+            ),
+            IconButton(
+              onPressed: () {
+                //notificationLocal();
+                notificationLocalSchedual();
+              },
+              icon: Icon(Icons.notifications_active),
             ),
           ],
         ),
@@ -71,10 +95,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             IconButton(
                               onPressed: () {
                                 id = TextEditingController(text: l1[index].id);
-                                title = TextEditingController(text: l1[index].title);
-                                cate = TextEditingController(text: l1[index].cate);
-                                desc = TextEditingController(text: l1[index].desc);
-                                img = TextEditingController(text: l1[index].img);
+                                title = TextEditingController(
+                                    text: l1[index].title);
+                                cate =
+                                    TextEditingController(text: l1[index].cate);
+                                desc =
+                                    TextEditingController(text: l1[index].desc);
+                                img =
+                                    TextEditingController(text: l1[index].img);
                                 DialogBox(l1[index].key.toString());
                               },
                               icon: Icon(
@@ -194,5 +222,78 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         });
+  }
+
+  void notificationLocal(String title,String body) async {
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+        "1", "Local Notification",
+        importance: Importance.max, priority: Priority.high);
+
+    IOSNotificationDetails IOSDetails =
+        IOSNotificationDetails(presentSound: true, presentAlert: false);
+
+    NotificationDetails notificationDetails =
+        NotificationDetails(android: androidDetails, iOS: IOSDetails);
+
+    await flutterLocalNotificationsPlugin.show(
+      1,
+      "$title",
+      "$body",
+      notificationDetails,
+    );
+  }
+
+  void notificationLocalSchedual() async {
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+        "1", "Local Notification",
+        importance: Importance.max, priority: Priority.high);
+
+    IOSNotificationDetails IOSDetails =
+        IOSNotificationDetails(presentSound: true, presentAlert: false);
+
+    NotificationDetails notificationDetails =
+        NotificationDetails(android: androidDetails, iOS: IOSDetails);
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        1,
+        "PowBhaji",
+        "Local Notification",
+        tz.TZDateTime.now(tz.local).add(Duration(seconds: 3)),
+        notificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true);
+  }
+
+  void FirebaseNotification()async{
+    firebaseMessaging = FirebaseMessaging.instance;
+
+    NotificationSettings notificationSettings = await firebaseMessaging!.requestPermission(
+      badge: true,
+      alert: true,
+      sound: true,
+      provisional: false,
+    );
+    if(notificationSettings.authorizationStatus==AuthorizationStatus.authorized){
+      FirebaseMessaging.onMessage.listen((event) {
+        String title = event.notification!.title.toString();
+        String body = event.notification!.body.toString();
+
+        notificationLocal(title,body);
+      });
+    }
+    else {
+      print("No Permission");
+    }
+  }
+  void local(){
+
+    AndroidInitializationSettings androidInitializationSettings =
+    AndroidInitializationSettings('android');
+    IOSInitializationSettings IOSinitializationSettings =
+    IOSInitializationSettings();
+    InitializationSettings initializationSettings = InitializationSettings(
+        android: androidInitializationSettings, iOS: IOSinitializationSettings);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 }
